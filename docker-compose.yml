@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234567
+      POSTGRES_DB: nutria
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4_gui
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 1234567
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - app-network
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  app-network:
+    driver: bridge

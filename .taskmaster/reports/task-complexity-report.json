@@ -1,0 +1,21 @@
+{
+	"meta": {
+		"generatedAt": "2025-07-01T23:49:25.073Z",
+		"tasksAnalyzed": 1,
+		"totalTasks": 27,
+		"analysisCount": 1,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 8,
+			"taskTitle": "Create Database Migrations for Core Models",
+			"complexityScore": 4,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Detail the specific database column types, constraints, and foreign key definitions within each migration subtask.",
+			"reasoning": "The task involves creating multiple database migrations with specific schemas and foreign key constraints. While not highly complex, it requires attention to detail across several distinct parts. The existing subtasks provide a good breakdown covering the creation of each migration file, adding constraints, reviewing, and testing, justifying a moderate complexity score and the current number of subtasks."
+		}
+	]
+}

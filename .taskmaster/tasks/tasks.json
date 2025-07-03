@@ -1,0 +1,523 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Setup: Laravel, Composer, Vite",
+        "description": "Set up the basic Laravel 12 project structure, configure Composer and NPM/Node.js for dependency management and asset compilation using Vite.",
+        "details": "Initialize a new Laravel project using Composer. Configure `.env` file for basic application settings. Ensure Composer and NPM dependencies are installed. Verify Vite is set up correctly for asset compilation.",
+        "testStrategy": "Run `composer install` and `npm install`. Verify project structure is created and dependencies are listed in `vendor` and `node_modules` directories. Run `npm run dev` to check Vite compilation.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Database Setup: Configure PostgreSQL Connection",
+        "description": "Configure the application to connect to a PostgreSQL database. Set up database credentials in the `.env` file and verify the connection.",
+        "details": "Update the `DATABASE_URL` or individual `DB_*` variables in the `.env` file to point to the PostgreSQL instance. Ensure the `database.php` configuration file is set up to use the `pgsql` driver. Verify the PostgreSQL server is accessible.",
+        "testStrategy": "Run `php artisan migrate` (even with no migrations) to test the database connection. Check Laravel logs for connection errors.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Frontend Setup: Tailwind CSS, ShadCN/UI, Dark Mode",
+        "description": "Integrate Tailwind CSS and ShadCN/UI into the Laravel project using Vite. Set up the base styles and configure Dark Mode.",
+        "details": "Install Tailwind CSS via NPM. Configure `tailwind.config.js` and `postcss.config.js`. Add Tailwind directives to the main CSS file. Follow ShadCN/UI installation guide for integrating components with React (even if initial MVP uses Blade, the setup is needed for future React components) and Tailwind. Implement the basic Dark Mode toggle mechanism or class application.",
+        "testStrategy": "Compile assets using `npm run dev` or `npm run build`. Create a simple Blade view using Tailwind classes and a ShadCN component (if possible with initial setup) to verify styling is applied. Test Dark Mode class is applied correctly.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement User Authentication Scaffolding",
+        "description": "Implement user authentication scaffolding including routes, controllers, and views for registration and login.",
+        "details": "Use Laravel's built-in authentication features or a package like Laravel Breeze/Jetstream for rapid scaffolding. Configure routes (`web.php`), controllers (e.g., `RegisteredUserController`, `AuthenticatedSessionController`), and Blade views for registration and login forms.",
+        "testStrategy": "Access registration and login routes in the browser. Verify forms are displayed. Test form submission validation (e.g., required fields, password confirmation).",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Create User Model and Migration",
+        "description": "Create the database migration for the `users` table if not already present from scaffolding, ensuring necessary fields like name, email, and password.",
+        "details": "Generate a migration file using `php artisan make:migration create_users_table`. Define columns: `id`, `name`, `email` (unique), `password`, `remember_token`, `timestamps`. Run the migration.",
+        "testStrategy": "Run `php artisan migrate`. Verify the `users` table is created in the PostgreSQL database with the correct schema.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement User Registration Functionality",
+        "description": "Implement the backend logic and frontend form for user registration.",
+        "details": "Backend: Implement the controller logic to handle registration form submission, validate input, create a new User record in the database, and log the user in. Frontend: Create/modify the registration Blade view with a form posting to the registration route.",
+        "testStrategy": "Attempt to register a new user via the web interface. Verify a new record appears in the `users` table and the user is redirected to the dashboard/home page after successful registration. Test validation errors for invalid input.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement User Login/Logout Functionality",
+        "description": "Implement the backend logic and frontend forms for user login and logout.",
+        "details": "Backend: Implement controller logic for login (authenticating credentials) and logout (invalidating session). Frontend: Create/modify login Blade view with a form. Add a logout link/button.",
+        "testStrategy": "Attempt to log in with valid and invalid credentials. Verify successful login redirects and invalid login shows errors. Test the logout functionality and verify the user is redirected to the login page.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Create Database Migrations for Core Models",
+        "description": "Create database migrations for the core data models: `patients`, `diet_plans`, `meals`, `foods` (local cache/custom), and `meal_food` (pivot).",
+        "details": "Generate migration files for each table. Define schemas based on PRD: `patients` (user_id FK, name, personal_data JSON, clinical_history TEXT), `diet_plans` (patient_id FK, name, number_of_meals), `meals` (diet_plan_id FK, name, order), `foods` (name, nutritional_data JSON), `meal_food` (meal_id FK, food_id FK, quantity, manual_nutritional_data JSON - for MVP manual entry). Add foreign key constraints.",
+        "testStrategy": "Run `php artisan migrate`. Verify all tables are created in the PostgreSQL database with the specified columns and foreign key constraints.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 2,
+            "title": "Criar migração para a tabela diet_plans",
+            "description": "Gerar arquivo de migração para a tabela diet_plans com os campos: patient_id (FK), name, number_of_meals.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 3,
+            "title": "Criar migração para a tabela meals",
+            "description": "Gerar arquivo de migração para a tabela meals com os campos: diet_plan_id (FK), name, order.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 4,
+            "title": "Criar migração para a tabela foods",
+            "description": "Gerar arquivo de migração para a tabela foods com os campos: name, nutritional_data (JSON).",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 5,
+            "title": "Criar migração para a tabela meal_food (pivot)",
+            "description": "Gerar arquivo de migração para a tabela meal_food com os campos: meal_id (FK), food_id (FK), quantity, manual_nutritional_data (JSON).",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 6,
+            "title": "Adicionar restrições de chaves estrangeiras",
+            "description": "Adicionar restrições de foreign key em todas as tabelas conforme o modelo relacional.",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 7,
+            "title": "Revisar e validar os arquivos de migração",
+            "description": "Revisar todos os arquivos de migração criados para garantir consistência e ausência de erros.",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 8,
+            "title": "Executar php artisan migrate e validar tabelas",
+            "description": "Executar o comando php artisan migrate e verificar se todas as tabelas foram criadas corretamente no PostgreSQL.",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Create Eloquent Models and Define Relationships",
+        "description": "Create Eloquent Models for `User`, `Patient`, `DietPlan`, `Meal`, `Food`, and `MealFood` with relationships defined.",
+        "details": "Generate Model files using `php artisan make:model`. Define relationships (e.g., User has many Patients, Patient has many DietPlans, DietPlan has many Meals, Meal belongs to DietPlan, Meal has many Foods through MealFood, Food has many Meals through MealFood). Define fillable attributes and casts (e.g., `personal_data` and `nutritional_data` as JSON).",
+        "testStrategy": "Write simple Tinker tests (`php artisan tinker`) to instantiate models and test relationship access (e.g., `$user->patients`, `$patient->dietPlans`).",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Patient Listing (Backend & Frontend)",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) to display a list of patients associated with the logged-in nutritionist.",
+        "details": "Backend: Create a `PatientController` with an `index` method that fetches patients belonging to the authenticated user (`Auth::user()->patients`). Pass the patient data to a Blade view. Frontend: Create a Blade view (`patients/index.blade.php`) to iterate over the patient data and display it, likely in a table or list format.",
+        "testStrategy": "Log in as a user. Navigate to the patients list route. Verify that only patients associated with that user are displayed (initially none, or test with seeded data).",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement Patient Creation (Backend & Frontend)",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) for creating a new patient record.",
+        "details": "Backend: Add `create` and `store` methods to `PatientController`. The `create` method shows the form, `store` handles submission, validates input, and creates a new `Patient` record associated with the current user. Frontend: Create a Blade view (`patients/create.blade.php`) with a form for patient data (name, personal_data, clinical_history, etc.).",
+        "testStrategy": "Navigate to the 'Add Patient' page. Fill out the form and submit. Verify a new patient record is created in the database and appears in the patient list. Test form validation for required fields.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Patient Viewing (Backend & Frontend)",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) to display details of a specific patient.",
+        "details": "Backend: Add a `show` method to `PatientController` that accepts a patient ID, fetches the patient record (ensuring it belongs to the current user), and passes it to a Blade view. Frontend: Create a Blade view (`patients/show.blade.php`) to display all details of the patient.",
+        "testStrategy": "From the patient list, click on a patient's name/link. Verify the correct patient's details are displayed on the dedicated view. Test accessing a patient that doesn't belong to the user (should result in an error/redirect).",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Patient Editing (Backend & Frontend)",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) for editing an existing patient record.",
+        "details": "Backend: Add `edit` and `update` methods to `PatientController`. `edit` fetches the patient and shows the pre-filled form. `update` handles submission, validates, and updates the patient record. Frontend: Create a Blade view (`patients/edit.blade.php`) with a form pre-filled with the patient's current data.",
+        "testStrategy": "From the patient view or list, click the 'Edit' button. Modify patient details in the form and submit. Verify the changes are saved in the database and reflected in the patient view/list.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Implement Patient Deletion (Backend & Frontend)",
+        "description": "Implement the backend logic (Controller) and frontend action (Route/Link) for deleting a patient record.",
+        "details": "Backend: Add a `destroy` method to `PatientController` that accepts a patient ID, deletes the patient record (ensuring it belongs to the current user). Frontend: Add a 'Delete' button or link on the patient list or view, typically using a form with a DELETE HTTP method or a JavaScript confirmation.",
+        "testStrategy": "From the patient list or view, click the 'Delete' button. Confirm deletion if prompted. Verify the patient record is removed from the database and no longer appears in the list.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Diet Plan Listing for a Patient",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) to display a list of diet plans for a specific patient.",
+        "details": "Backend: Add a method to `PatientController` (or a new `DietPlanController`) to fetch diet plans associated with a given patient ID (`$patient->dietPlans`). Pass the data to a Blade view. Frontend: Create a Blade view (`dietplans/index.blade.php` or integrated into patient view) to list diet plans for the selected patient.",
+        "testStrategy": "Navigate to a patient's view. Verify a section lists their diet plans (initially empty, or test with seeded data).",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Implement Diet Plan Creation",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) for creating a new diet plan for a patient.",
+        "details": "Backend: Add `create` and `store` methods to `DietPlanController`. `create` shows the form, `store` handles submission, validates input (name, number of meals), and creates a new `DietPlan` record associated with the patient. Frontend: Create a Blade view (`dietplans/create.blade.php`) with a form to create a new plan.",
+        "testStrategy": "From the patient's diet plan list, click 'Create New Plan'. Fill out the form (name, number of meals) and submit. Verify a new diet plan record is created in the database and appears in the patient's diet plan list.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Implement Meal Structure within Diet Plan",
+        "description": "Implement the backend logic (Controller) and frontend view (Blade) to define the structure of meals within a diet plan.",
+        "details": "Backend: Add methods to `DietPlanController` or a new `MealController` to handle creating `Meal` records associated with a diet plan based on the specified number of meals. Frontend: Modify the diet plan view (`dietplans/show.blade.php`) to display the meal containers (e.g., 'Café da Manhã', 'Almoço') based on the plan's `number_of_meals`. Allow naming/ordering meals.",
+        "testStrategy": "Create a diet plan with a specific number of meals. Navigate to the diet plan view. Verify the correct number of meal sections are displayed, allowing for naming.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Manual Food Entry UI within a Meal (MVP)",
+        "description": "Implement the frontend UI (Blade view/simple JS) within a meal section to manually add food items, quantity, and nutritional data for the MVP.",
+        "details": "Frontend: Within each meal container in the diet plan view, add a form or interactive elements (using Blade loops and potentially simple Alpine.js or vanilla JS if needed for dynamic rows) to input food name, quantity, and fields for manual nutritional data (calories, macros).",
+        "testStrategy": "Navigate to a diet plan view. Within a meal section, verify the UI elements for adding food items manually are present and functional (e.g., can add multiple rows).",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Implement Manual Food Data Saving (Backend)",
+        "description": "Implement the backend logic (Controller) to save the manually entered food items, quantity, and nutritional data associated with a meal.",
+        "details": "Backend: Add a method to `MealController` or `DietPlanController` to handle the form submission from the diet plan view. Process the submitted data, create `MealFood` records for each food item, storing the manual quantity and nutritional data (in the `manual_nutritional_data` JSON column if added in migration 8, or directly in `nutritional_data` if `foods` table is used for manual entries).",
+        "testStrategy": "Add several food items manually to a meal in a diet plan and save. Verify `MealFood` records are created in the database with the correct meal ID, quantity, and manual nutritional data.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          18
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Implement Display of Manual Food Data in Plan (Frontend)",
+        "description": "Implement the frontend UI (Blade view) to display the manually added food items and their data within the diet plan view.",
+        "details": "Frontend: Modify the diet plan view (`dietplans/show.blade.php`) to fetch and display the `MealFood` records associated with each meal, showing the food name, quantity, and manual nutritional data.",
+        "testStrategy": "After saving a diet plan with manual food entries, refresh or navigate back to the diet plan view. Verify the previously entered food items, quantities, and nutritional data are displayed correctly under their respective meals.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Integrate PDF Generation Library",
+        "description": "Integrate a suitable PDF generation library into the Laravel project.",
+        "details": "Choose a library like `dompdf/dompdf` or `barryvdh/laravel-snappy` (which uses wkhtmltopdf). Install via Composer. Configure the library if necessary (e.g., service provider, alias).",
+        "testStrategy": "Run `composer require ...`. Verify the package is installed. Run a simple test command or route provided by the library documentation to ensure it's functional.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Implement PDF Generation Logic for Manual Plan",
+        "description": "Implement the backend logic (Controller) to fetch a diet plan's data and use the PDF library to generate a PDF document.",
+        "details": "Backend: Add a method to `DietPlanController` (e.g., `generatePdf`) that fetches the complete diet plan data (plan, meals, meal foods with manual data). Use the chosen PDF library's API to generate a PDF from this data, likely rendering an HTML view first.",
+        "testStrategy": "Manually trigger the PDF generation logic from a route or Tinker. Verify that a PDF file is generated on the server or returned as a response.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          20,
+          21
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Create PDF Template (Blade View)",
+        "description": "Create a Blade view specifically formatted to serve as the HTML source for the PDF generation.",
+        "details": "Create a Blade view file (e.g., `pdfs/dietplan.blade.php`). Structure the HTML using standard HTML/CSS to represent the diet plan, meals, and food items. Ensure the layout is suitable for print/PDF output. Use inline styles or a dedicated CSS file for PDF rendering if the library supports it.",
+        "testStrategy": "Render the PDF Blade view directly in a browser (temporarily via a route) to check its layout and data display. Generate a PDF using task 22 and visually inspect the output.",
+        "priority": "high",
+        "dependencies": [
+          22
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Add PDF Download Button",
+        "description": "Add a button or link in the diet plan view to trigger the PDF download.",
+        "details": "Frontend: In the diet plan view (`dietplans/show.blade.php`), add an anchor tag or a form button that points to the backend route implemented in task 22.",
+        "testStrategy": "Navigate to a diet plan view with data. Click the 'Generate PDF' button. Verify that a PDF file is downloaded by the browser and contains the correct diet plan information.",
+        "priority": "high",
+        "dependencies": [
+          22,
+          23
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Apply Styling to Patient Management Views",
+        "description": "Apply ShadCN/Tailwind styling to all Patient Management views (list, create, show, edit).",
+        "details": "Refactor the Blade views for patient CRUD to use Tailwind CSS classes and integrate ShadCN/UI components (e.g., buttons, forms, tables, cards) for a consistent and modern look.",
+        "testStrategy": "Navigate through all patient management pages (list, create, view, edit). Visually inspect that styling is applied correctly and components look consistent with the design system.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Apply Styling to Diet Plan Views",
+        "description": "Apply ShadCN/Tailwind styling to the Diet Plan creation and editing views, including the manual food entry UI.",
+        "details": "Refactor the Blade views for diet plan creation, viewing, and meal/food entry to use Tailwind CSS classes and ShadCN/UI components. Style the meal containers, food entry forms/rows, and display of added foods.",
+        "testStrategy": "Navigate through the diet plan creation and viewing pages. Visually inspect that styling is applied correctly to the plan structure, meals, and food entry/display sections.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          20
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Ensure Responsiveness for MVP Views",
+        "description": "Ensure all MVP views (Authentication, Patient, Diet Plan, PDF trigger) are responsive across desktop and tablet screen sizes.",
+        "details": "Use Tailwind's responsive utility classes (e.g., `sm:`, `md:`, `lg:`) to adjust layout, spacing, and component visibility based on screen size. Test views using browser developer tools responsive mode or actual devices.",
+        "testStrategy": "Resize the browser window or use developer tools responsive mode to view all MVP pages on different screen sizes (especially tablet breakpoints). Verify layout adjusts correctly and content remains accessible and usable.",
+        "priority": "medium",
+        "dependencies": [
+          25,
+          26
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Criar migração para a tabela patients",
+        "description": "Gerar arquivo de migração para a tabela patients com os campos: user_id (FK), name, date_of_birth (date), gender (string), occupation (string), address (text), phone (string), cpf (string), clinical_history (TEXT), weight (float), height (float), body_fat_percentage (float, nullable), physical_activity_frequency (integer), food_allergies (text, nullable) e observation (text, nullable).",
+        "status": "done",
+        "dependencies": [
+          8
+        ],
+        "priority": "high",
+        "details": "Adicionar os campos especificados na descrição. O campo `body_fat_percentage` deve ser nullable. O campo `physical_activity_frequency` deve ser um inteiro representando uma escala de 0 a 4, onde 0 = Sedentário, 1 = Levemente ativo, 2 = Moderadamente ativo, 3 = Muito ativo, 4 = Extremamente ativo. Adicionar também o campo `food_allergies` como um campo de texto anulável. Adicionar o campo `observation` como um campo de texto anulável para armazenar observações adicionais.",
+        "testStrategy": "Verificar se o arquivo de migração foi gerado corretamente. Executar a migração e verificar se a tabela `patients` foi criada no banco de dados com todos os campos listados, incluindo os campos `weight`, `height`, `body_fat_percentage`, `physical_activity_frequency`, `food_allergies` e `observation`. Confirmar os tipos de dados e constraints, especialmente a nulidade de `body_fat_percentage`, `food_allergies` e `observation`, e o tipo inteiro para `physical_activity_frequency`.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Generate migration file for patients table",
+            "description": "Create the initial database migration file using the framework's command-line tool to add a new table named `patients`.",
+            "dependencies": [],
+            "details": "Use the appropriate command provided by your framework (e.g., `php artisan make:migration create_patients_table --create=patients` for Laravel, or equivalent for other frameworks) to generate the migration file in the correct migrations directory.",
+            "status": "done",
+            "testStrategy": "Verify that a new migration file with a name like `YYYY_MM_DD_HHMMSS_create_patients_table.php` (or similar) is created in the designated migrations folder."
+          },
+          {
+            "id": 2,
+            "title": "Add basic required columns to patients table migration",
+            "description": "Modify the generated migration file to add the core, non-nullable columns for the `patients` table: `name`, `date_of_birth`, `gender`, `occupation`, `address`, `phone`, `cpf`, `clinical_history`, `weight`, and `height`.",
+            "dependencies": [
+              1
+            ],
+            "details": "Inside the `up()` method of the migration file, define the schema for the `patients` table. Add columns with appropriate data types (e.g., `string` for name, gender, occupation, phone, cpf; `date` for date_of_birth; `text` for address, clinical_history; `float` or `double` for weight, height). Ensure these columns are set as non-nullable (which is often the default unless specified otherwise).",
+            "status": "done",
+            "testStrategy": "Manually inspect the `up()` method in the migration file to confirm that all specified basic required columns are added with suitable data types and are not marked as nullable."
+          },
+          {
+            "id": 3,
+            "title": "Add nullable columns to patients table migration",
+            "description": "Add the nullable columns `body_fat_percentage`, `food_allergies`, and `observation` to the `patients` table definition in the migration file.",
+            "dependencies": [
+              2
+            ],
+            "details": "Add columns for `body_fat_percentage` (float), `food_allergies` (text), and `observation` (text). Use your framework's schema builder methods to explicitly mark these columns as nullable (e.g., `->nullable()` in Laravel).",
+            "status": "done",
+            "testStrategy": "Manually inspect the `up()` method in the migration file to confirm that `body_fat_percentage`, `food_allergies`, and `observation` columns are added with correct types and are explicitly marked as nullable."
+          },
+          {
+            "id": 4,
+            "title": "Add physical_activity_frequency column to patients table",
+            "description": "Add the `physical_activity_frequency` column as an integer type to the `patients` table migration. This field will represent a scale from 0 to 4.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add an integer column named `physical_activity_frequency`. While the 0-4 scale is application-level logic, the database column type should be `integer`. This column should likely be non-nullable, assuming a default activity level or requiring input.",
+            "status": "done",
+            "testStrategy": "Manually inspect the `up()` method in the migration file to confirm that the `physical_activity_frequency` column is added as an integer type."
+          },
+          {
+            "id": 5,
+            "title": "Add user_id column and foreign key constraint to patients table",
+            "description": "Add the `user_id` column to the `patients` table and define it as a foreign key referencing the `id` column on the `users` table.",
+            "dependencies": [
+              4
+            ],
+            "details": "Add a column named `user_id` with an appropriate type for a foreign key (e.g., `unsignedBigInteger` or `integer`). Then, add the foreign key constraint referencing the `id` column on the `users` table. Consider adding `onDelete('cascade')` or `onDelete('set null')` based on application requirements, or omit for the default behavior.",
+            "status": "done",
+            "testStrategy": "Manually inspect the `up()` method in the migration file to confirm that the `user_id` column is added and the foreign key constraint is correctly defined, referencing the `users` table's `id` column."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-01T23:15:46.054Z",
+      "updated": "2025-07-02T00:06:38.666Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

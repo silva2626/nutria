@@ -1,0 +1,109 @@
+# PRD: NutrIA - Sistema de Gestão para Nutricionistas
+
+### Overview
+
+Este documento detalha os requisitos para o **NutrIA**, um sistema web projetado para nutricionistas. O sistema resolve o problema da gestão descentralizada de pacientes e do tempo excessivo gasto na criação manual de planos alimentares, que envolve a pesquisa e o registro repetitivo de dados nutricionais. O público-alvo são nutricionistas e profissionais de dietética que buscam eficiência, precisão e uma apresentação profissional em seu trabalho. O valor do NutrIA reside na sua capacidade de centralizar informações e automatizar tarefas complexas através de um assistente de IA, permitindo que o profissional dedique mais tempo ao atendimento e estratégia nutricional do paciente.
+
+### Core Features
+
+* **Módulo de Gestão de Pacientes (Prontuário Digital)**
+    * **O que faz:** Permite o cadastro, consulta, edição e exclusão (CRUD) de pacientes. Os registros incluem dados pessoais (nome, contato), dados antropométricos (altura, peso, dobras cutâneas), histórico clínico, metas e um campo dedicado para restrições alimentares e alergias.
+    * **Por que é importante:** Centraliza todas as informações essenciais dos pacientes em um único local seguro, eliminando a necessidade de planilhas e documentos separados, e fornecendo uma visão 360º do paciente.
+    * **Como funciona (alto nível):** O nutricionista preenche um formulário digital em uma view renderizada pelo Laravel. Ao salvar, os dados são processados pelo controller e armazenados no banco de dados, associados à conta do nutricionista. A lista de pacientes é exibida em um dashboard.
+
+* **Criador de Planos Alimentares**
+    * **O que faz:** Uma interface para construir planos alimentares estruturados, permitindo ao nutricionista definir o número de refeições diárias e adicionar alimentos específicos a cada uma delas.
+    * **Por que é importante:** Oferece uma maneira organizada e visual para elaborar dietas complexas e personalizadas, garantindo que todas as necessidades do paciente sejam atendidas de forma estruturada.
+    * **Como funciona (alto nível):** O nutricionista cria um novo plano para um paciente, define o número e nome das refeições (ex: Café da Manhã, Almoço). Cada refeição funciona como um contêiner onde os alimentos serão adicionados através de componentes interativos.
+
+* **Assistente de IA para Alimentos**
+    * **O que faz:** Durante a adição de um alimento ao plano, um campo de busca inteligente (componente React) sugere alimentos de um vasto banco de dados e, ao selecionar um, preenche automaticamente suas informações nutricionais (calorias, macronutrientes, etc.) e a quantidade padrão, que pode ser ajustada.
+    * **Por que é importante:** Este é o principal diferencial, economizando um tempo significativo e reduzindo a chance de erros manuais. Transforma uma tarefa tediosa em um processo rápido e eficiente.
+    * **Como funciona (alto nível):** Dentro de uma refeição, o nutricionista interage com um componente React. Ao digitar o nome do alimento, o componente faz uma chamada assíncrona (AJAX) a uma rota da API interna do Laravel, que por sua vez consulta a API externa de alimentos. Os resultados são exibidos no componente sem a necessidade de recarregar a página.
+
+* **Geração de PDF Profissional**
+    * **O que faz:** Exporta o plano alimentar finalizado para um arquivo PDF com um clique.
+    * **Por que é importante:** Entrega um resultado tangível e profissional para o paciente, que pode ser facilmente impresso, salvo ou enviado digitalmente.
+    * **Como funciona (alto nível):** O sistema coleta todos os dados do plano alimentar, um controller do Laravel processa esses dados e utiliza uma biblioteca para gerar um arquivo PDF para download.
+
+### User Experience
+
+* **User Personas:**
+    * **Dra. Ana (Nutricionista Clínica):** 35 anos, tecnicamente proficiente, mas com pouco tempo. Gerencia múltiplos pacientes simultaneamente. Valoriza ferramentas que otimizem seu fluxo de trabalho, reduzam tarefas repetitivas e apresentem um resultado final profissional para seus pacientes.
+
+* **Key User Flows:**
+    * **Onboarding:** O nutricionista se cadastra e faz login no sistema.
+    * **Gestão de Paciente:** No dashboard, ele clica em "Adicionar Paciente", preenche o formulário e salva.
+    * **Criação de Dieta:** Ele seleciona um paciente, vai para a aba "Planos Alimentares" e clica em "Criar Novo Plano". Define o nome do plano e o número de refeições.
+    * **Montagem do Plano com IA:** Dentro de uma refeição, ele interage com o componente React de busca, digita "Arroz branco cozido", seleciona a opção da lista, ajusta a quantidade, e os valores são atualizados dinamicamente na tela. Ele repete o processo para todos os alimentos.
+    * **Finalização:** Após a conclusão, ele clica em "Salvar e Gerar PDF". O formulário é submetido, o backend processa os dados e retorna o PDF para download.
+
+* **UI/UX Considerations:**
+    * **Tema Escuro (Dark Mode):** A interface será primariamente em modo escuro.
+    * **Design Minimalista:** Uso de componentes da biblioteca **ShadCN/UI** sobre **Tailwind CSS** para criar uma interface limpa, moderna e funcional.
+    * **Responsividade:** O layout deve ser adaptável para uso confortável em desktops e tablets.
+
+### Technical Architecture
+
+* **System Components:**
+    * **Backend:** Framework Laravel 12 (PHP).
+    * **Frontend:** Arquitetura acoplada (monolítica). O frontend é renderizado pelo Laravel utilizando o sistema de templates **Blade**. A interatividade é enriquecida com componentes **React** integrados diretamente nas views.
+    * **Banco de Dados:** **PostgreSQL**.
+
+* **Data Models:**
+    * `User`: (Nutricionista) id, name, email, password.
+    * `Patient`: id, user_id (FK), name, personal_data (JSON), clinical_history (TEXT).
+    * `DietPlan`: id, patient_id (FK), name, number_of_meals.
+    * `Meal`: id, diet_plan_id (FK), name, order.
+    * `Food`: id, name, nutritional_data (JSON) - Pode ser uma tabela local para cache ou customização.
+    * `MealFood`: Tabela pivot para relacionar `Meal` e `Food`, contendo `quantity`.
+
+* **APIs and Integrations:**
+    * **Rotas Web e API Interna:** A comunicação principal ocorrerá através das rotas web do Laravel, onde os controllers processam os dados e os passam diretamente para as views Blade. Uma API interna será desenvolvida para dar suporte a ações assíncronas dos componentes React (ex: busca de alimentos em tempo real sem recarregar a página).
+    * **API Externa:** Integração com uma API de banco de dados de alimentos (ex: USDA FoodData Central, Edamam, ou similar) para a funcionalidade do "Assistente de IA".
+
+* **Infrastructure Requirements:**
+    * Servidor web compatível com PHP/Laravel (Nginx ou Apache).
+    * Servidor de banco de dados **PostgreSQL**.
+    * Ambiente de execução PHP 8.2+ com as extensões necessárias para o Laravel.
+    * Composer para gerenciamento de dependências PHP.
+    * Node.js/NPM para o processo de compilação de assets de frontend (utilizando Vite, padrão do Laravel).
+
+### Development Roadmap
+
+* **MVP (Minimum Viable Product) Requirements:**
+    * **Autenticação de Usuário:** Sistema de registro e login.
+    * **CRUD de Pacientes:** Funcionalidade completa para adicionar, ver, editar e remover pacientes.
+    * **Criador de Dietas (Manual):** Ferramenta para criar planos, adicionar refeições e inserir alimentos e seus dados nutricionais de forma **manual**, sem a integração da IA.
+    * **Geração de PDF Simples:** Exportação do plano alimentar inserido manualmente para um PDF com layout básico.
+    * **UI Base:** Implementação da estrutura visual com Blade, tema escuro, Tailwind e ShadCN/UI.
+
+* **Future Enhancements:**
+    * **Fase 2:** Integração do "Assistente de IA" com componentes React para busca de alimentos.
+    * **Fase 3:** Dashboards com gráficos para visualização do progresso do paciente.
+    * **Fase 4:** Criação de um portal para o paciente visualizar seu plano alimentar online.
+    * **Fase 5:** Biblioteca de receitas que podem ser adicionadas aos planos.
+
+### Logical Dependency Chain
+
+1.  **Fundação:** Configurar o projeto Laravel, banco de dados PostgreSQL e a estrutura base do frontend (Vite, Tailwind/ShadCN).
+2.  **Autenticação:** Implementar o sistema de login/registro (rotas, controllers, views Blade).
+3.  **Módulos Core:** Desenvolver o CRUD de Pacientes e a estrutura de Planos Alimentares de forma integrada (backend + frontend).
+4.  **MVP Funcional:** Construir as views Blade e os componentes React (se necessários para o MVP manual) para consumir os dados passados pelos controllers. Implementar a criação manual de dietas e a geração de PDF. O ciclo de desenvolvimento será integrado: criar a rota, o controller, a view Blade para cada funcionalidade.
+5.  **Melhoria com IA:** Introduzir os componentes React mais complexos para a busca assíncrona de alimentos, conectando-os à API interna e externa.
+
+### Risks and Mitigations
+
+* **Riscos Técnicos:**
+    * **Risco:** A qualidade e a disponibilidade da API de alimentos (dados imprecisos, custo, falta de alimentos brasileiros).
+    * **Mitigação:** Pesquisar e selecionar a API antes do início do desenvolvimento. Implementar uma funcionalidade que permita ao nutricionista cadastrar seus próprios alimentos como um fallback.
+    * **Risco:** A geração de PDFs complexos e bem formatados.
+    * **Mitigação:** Utilizar bibliotecas robustas e bem documentadas do ecossistema Laravel (ex: `dompdf` ou `Snappy`). Iniciar com um template de PDF simples para o MVP.
+
+* **Riscos de Escopo:**
+    * **Risco:** Scope creep (tentação de adicionar funcionalidades "pequenas" antes de finalizar o MVP).
+    * **Mitigação:** Aderir estritamente ao roadmap definido. Todas as novas ideias devem ser documentadas na seção "Future Enhancements".
+
+* **Riscos de Recursos:**
+    * **Risco:** Limitações de tempo e/ou recursos de desenvolvimento.
+    * **Mitigação:** Focar na cadeia de dependência lógica para ter um produto utilizável o mais rápido possível (MVP), validando a ideia central antes de investir em funcionalidades complexas.
